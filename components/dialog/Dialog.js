@@ -26,7 +26,7 @@ const factory = (Overlay, Button) => {
         onMouseMove={props.onOverlayMouseMove}
         onMouseUp={props.onOverlayMouseUp}
       >
-        <div data-react-toolbox='dialog' className={className}>
+        <div data-react-toolbox='dialog' role='dialog' className={className}>
           <section role='body' className={props.theme.body}>
             {props.title ? <h6 className={props.theme.title}>{props.title}</h6> : null}
             {props.children}
