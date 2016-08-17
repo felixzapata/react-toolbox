@@ -32,8 +32,14 @@ class Overlay extends Component {
   }
 
   componentWillUpdate (nextProps) {
-    if (nextProps.active && !this.props.active) document.body.style.overflow = 'hidden';
-    if (!nextProps.active && this.props.active) document.body.style.overflow = null;
+    if (nextProps.active && !this.props.active) {
+      document.body.setAttribute('aria-hidden', true);
+      document.body.style.overflow = 'hidden';
+    } 
+    if (!nextProps.active && this.props.active) {
+      document.body.setAttribute('aria-hidden', false);
+      document.body.style.overflow = null;
+    } 
   }
 
   componentDidUpdate () {
