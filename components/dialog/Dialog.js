@@ -1,48 +1,12 @@
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { themr } from 'react-css-themr';
 import classnames from 'classnames';
 import { DIALOG } from '../identifiers.js';
-import ActivableRenderer from '../hoc/ActivableRenderer.js';
-import InjectButton from '../button/Button.js';
-import InjectOverlay from '../overlay/Overlay.js';
+import Button from '../button/Button.js';
+import Overlay from '../overlay/Overlay.js';
 
-const factory = (Overlay, Button) => {
-  const Dialog = (props) => {
-    const actions = props.actions.map((action, idx) => {
-      const className = classnames(props.theme.button, {[action.className]: action.className});
-      return <Button key={idx} {...action} className={className} />;
-    });
-
-    const className = classnames([props.theme.dialog, props.theme[props.type]], {
-      [props.theme.active]: props.active
-    }, props.className);
-
-    return (
-      <Overlay
-        active={props.active}
-        onClick={props.onOverlayClick}
-        onEscKeyDown={props.onEscKeyDown}
-        onMouseDown={props.onOverlayMouseDown}
-        onMouseMove={props.onOverlayMouseMove}
-        onMouseUp={props.onOverlayMouseUp}
-      >
-        <div data-react-toolbox='dialog' role='dialog' className={className}>
-          <section role='body' className={props.theme.body}>
-            {props.title ? <h6 className={props.theme.title}>{props.title}</h6> : null}
-            {props.children}
-          </section>
-          {actions.length
-            ? <nav role='navigation' className={props.theme.navigation}>
-                {actions}
-              </nav>
-            : null
-          }
-        </div>
-      </Overlay>
-    );
-  };
-
-  Dialog.propTypes = {
+class Dialog extends Component {
+  static propTypes = {
     actions: PropTypes.array,
     active: PropTypes.bool,
     children: PropTypes.node,
@@ -64,16 +28,49 @@ const factory = (Overlay, Button) => {
     type: PropTypes.string
   };
 
-  Dialog.defaultProps = {
+  static defaultProps = {
     actions: [],
     active: false,
     type: 'normal'
   };
 
-  return ActivableRenderer()(Dialog);
-};
+  render () {
+    const actions = this.props.actions.map((action, idx) => {
+      const className = classnames(this.props.theme.button, {[action.className]: action.className});
+      return <Button key={idx} {...action} className={className} />;
+    });
 
-const Dialog = factory(InjectOverlay, InjectButton);
+    const className = classnames([this.props.theme.dialog, this.props.theme[this.props.type]], {
+      [this.props.theme.active]: this.props.active
+    }, this.props.className);
+
+    return (
+      <Overlay
+        active={this.props.active}
+        onClick={this.props.onOverlayClick}
+        onEscKeyDown={this.props.onEscKeyDown}
+        onMouseDown={this.props.onOverlayMouseDown}
+        onMouseMove={this.props.onOverlayMouseMove}
+        onMouseUp={this.props.onOverlayMouseUp}
+      >
+        <div data-react-toolbox='dialog' role='dialog' tabindex='-1' className={className}>
+          <section role='body' className={this.props.theme.body}>
+            {this.props.title ? <h6 className={this.props.theme.title}>{this.props.title}</h6> : null}
+            {this.props.children}
+          </section>
+          {actions.length
+            ? <nav role='navigation' className={this.props.theme.navigation}>
+                {actions}
+              </nav>
+            : null
+          }
+        </div>
+      </Overlay>
+    );
+  }
+
+}
+
 export default themr(DIALOG)(Dialog);
 export { Dialog };
-export { factory as dialogFactory };
+
