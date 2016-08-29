@@ -81,5 +81,6 @@ var factory = function factory(Overlay, Button) {
 const Dialog = factory(Overlay, Button);
 export default themr(DIALOG)(Dialog);
 export { Dialog };
+export { factory as dialogFactory };
 
 
