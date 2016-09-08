@@ -34,33 +34,46 @@ var factory = function factory(Overlay, Button) {
     static defaultProps = {
       actions: [],
       active: false,
-      type: 'normal'
+      type: 'normal',
+      // Elements that can be focused even if they have [disabled] attribute.
+      FOCUSABLE_WITH_DISABLED: [
+        'a[href]',
+        'area[href]',
+        'iframe',
+        '[tabindex]',
+        '[contentEditable=true]'
+      ],
+      // Elements that cannot be focused if they have [disabled] attribute.
+      FOCUSABLE_WITHOUT_DISABLED: [
+        'input',
+        'select',
+        'textarea',
+        'button'
+      ]
     };
 
+    getSelector(tabIdx) {
+      if(tabIdx === 0) {
+        return this.props.FOCUSABLE_WITH_DISABLED.join('[tabindex="-1"],') + '[tabindex="-1"],' + this.props.FOCUSABLE_WITHOUT_DISABLED.join(':not([disabled])[tabindex="-1"],') + ':not([disabled])[tabindex="-1"]';
+      } else {
+        return this.props.FOCUSABLE_WITH_DISABLED.join(':not([tabindex="-1"]),') + ':not([tabindex="-1"]),' + this.props.FOCUSABLE_WITHOUT_DISABLED.join(':not([disabled]):not([tabindex="-1"]),') + ':not([disabled]):not([tabindex="-1"])';
+      }
+    }
+
+    // TODO: devolver el foco a donde estaba
+    // TODO: mandar el foco al dialog
+    // TODO: ocultar elementos del dialog
+
     setTabIndex(obj, tabIdx) {
-      // Elements that can be focused even if they have [disabled] attribute.
-      const FOCUSABLE_WITH_DISABLED = [
-          'a[href]',
-          'area[href]',
-          'iframe',
-          '[tabindex]',
-          '[contentEditable=true]'
-        ];
-      // Elements that cannot be focused if they have [disabled] attribute.
-      const FOCUSABLE_WITHOUT_DISABLED = [
-          'input',
-          'select',
-          'textarea',
-          'button'
-        ];
+
       // Discard elements with tabindex=-1 (makes them not focusable).
-      const selector = FOCUSABLE_WITH_DISABLED.join(':not([tabindex="-1"]),') +
-        ':not([tabindex="-1"]),' +
-        FOCUSABLE_WITHOUT_DISABLED.join(':not([disabled]):not([tabindex="-1"]),') +
-        ':not([disabled]):not([tabindex="-1"])';
+      const selector = this.getSelector(tabIdx);
+
       const focusables = Array.prototype.slice.call(obj.querySelectorAll(selector));
       const focusablesInDialog = Array.prototype.slice.call(this.refs.dialog.querySelectorAll(selector)); 
       const len = focusables.length;
+
+      console.log(focusables);
 
       var filtered = focusables.filter(function(value){
         return !focusablesInDialog.includes(value);
@@ -69,10 +82,6 @@ var factory = function factory(Overlay, Button) {
       for(var i = 0; i < filtered.length; i++) {
         filtered[i].setAttribute('tabindex', tabIdx);
       }
-    }
-
-    componentDidMount () {
-      console.log('componentDidMount');
     }
 
     componentWillUpdate (nextProps) {
@@ -85,14 +94,6 @@ var factory = function factory(Overlay, Button) {
         this.setTabIndex(document.body, 0);
       } 
 
-    }
-
-    componentDidUpdate () {
-      console.log('componentDidUpdate');
-    }
-
-    componentWillUnmount () {
-      console.log('componentWillUnmount');
     }
 
     render () {
@@ -114,7 +115,7 @@ var factory = function factory(Overlay, Button) {
           onMouseMove={this.props.onOverlayMouseMove}
           onMouseUp={this.props.onOverlayMouseUp}
         >
-          <div data-react-toolbox='dialog' ref='dialog' role='dialog' tabIndex='-1' className={className}>
+          <div data-react-toolbox='dialog' ref='dialog' role='dialog' tabIndex='-1' aria-hidden="true" className={className}>
             <section role='body' className={this.props.theme.body}>
               {this.props.title ? <h6 className={this.props.theme.title}>{this.props.title}</h6> : null}
               {this.props.children}
