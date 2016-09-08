@@ -73,8 +73,6 @@ var factory = function factory(Overlay, Button) {
       const focusablesInDialog = Array.prototype.slice.call(this.refs.dialog.querySelectorAll(selector)); 
       const len = focusables.length;
 
-      console.log(focusables);
-
       var filtered = focusables.filter(function(value){
         return !focusablesInDialog.includes(value);
       });
