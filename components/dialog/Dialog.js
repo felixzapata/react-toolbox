@@ -62,34 +62,40 @@ var factory = function factory(Overlay, Button) {
 
     // TODO: devolver el foco a donde estaba
     // TODO: mandar el foco al dialog
-    // TODO: ocultar elementos del dialog
 
-    setTabIndex(obj, tabIdx) {
+    trapFocus(obj, tabIdx) {
 
-      // Discard elements with tabindex=-1 (makes them not focusable).
       const selector = this.getSelector(tabIdx);
-
       const focusables = Array.prototype.slice.call(obj.querySelectorAll(selector));
       const focusablesInDialog = Array.prototype.slice.call(this.refs.dialog.querySelectorAll(selector)); 
-      const len = focusables.length;
 
-      var filtered = focusables.filter(function(value){
+      const filtered = focusables.filter(function(value){
         return !focusablesInDialog.includes(value);
       });
 
-      for(var i = 0; i < filtered.length; i++) {
-        filtered[i].setAttribute('tabindex', tabIdx);
+      const len = filtered.length;
+
+      for(var i = 0; i < len; i++) {
+        this.setTabIndex(filtered[i], tabIdx);
       }
+    }
+
+    setTabIndex(obj, tabIdx) {
+      obj.setAttribute('tabindex', tabIdx);
     }
 
     componentWillUpdate (nextProps) {
 
       if (nextProps.active && !this.props.active) {
+        this.setTabIndex(this.refs.dialog, -1);
+        this.refs.dialog.setAttribute('aria-hidden', false);
         this.refs.dialog.focus();
-        this.setTabIndex(document.body, -1);
+        this.trapFocus(document.body, -1);
       } 
       if (!nextProps.active && this.props.active) {
-        this.setTabIndex(document.body, 0);
+        this.refs.dialog.removeAttribute('tabindex');
+        this.refs.dialog.setAttribute('aria-hidden', true);
+        this.trapFocus(document.body, 0);
       } 
 
     }
@@ -113,7 +119,7 @@ var factory = function factory(Overlay, Button) {
           onMouseMove={this.props.onOverlayMouseMove}
           onMouseUp={this.props.onOverlayMouseUp}
         >
-          <div data-react-toolbox='dialog' ref='dialog' role='dialog' tabIndex='-1' aria-hidden="true" className={className}>
+          <div data-react-toolbox='dialog' ref='dialog' role='dialog' aria-hidden="true" className={className}>
             <section role='body' className={this.props.theme.body}>
               {this.props.title ? <h6 className={this.props.theme.title}>{this.props.title}</h6> : null}
               {this.props.children}
