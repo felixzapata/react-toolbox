@@ -87,15 +87,15 @@ var factory = function factory(Overlay, Button) {
     componentWillUpdate (nextProps) {
 
       if (nextProps.active && !this.props.active) {
-        this.setTabIndex(this.refs.dialog, -1);
+        this.trapFocus(document.body, '-1');
+        this.setTabIndex(this.refs.dialog, '-1');
         this.refs.dialog.setAttribute('aria-hidden', false);
         this.refs.dialog.focus();
-        this.trapFocus(document.body, -1);
       } 
       if (!nextProps.active && this.props.active) {
+        this.trapFocus(document.body, '0');
         this.refs.dialog.removeAttribute('tabindex');
         this.refs.dialog.setAttribute('aria-hidden', true);
-        this.trapFocus(document.body, 0);
       } 
 
     }
