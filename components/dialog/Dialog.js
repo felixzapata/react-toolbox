@@ -53,7 +53,7 @@ var factory = function factory(Overlay, Button) {
     };
 
     getSelector(tabIdx) {
-      if(tabIdx === 0) {
+      if(tabIdx === '0') {
         return this.props.FOCUSABLE_WITH_DISABLED.join('[tabindex="-1"],') + '[tabindex="-1"],' + this.props.FOCUSABLE_WITHOUT_DISABLED.join(':not([disabled])[tabindex="-1"],') + ':not([disabled])[tabindex="-1"]';
       } else {
         return this.props.FOCUSABLE_WITH_DISABLED.join(':not([tabindex="-1"]),') + ':not([tabindex="-1"]),' + this.props.FOCUSABLE_WITHOUT_DISABLED.join(':not([disabled]):not([tabindex="-1"]),') + ':not([disabled]):not([tabindex="-1"])';
@@ -86,12 +86,14 @@ var factory = function factory(Overlay, Button) {
 
     componentWillUpdate (nextProps) {
 
+      // open
       if (nextProps.active && !this.props.active) {
         this.trapFocus(document.body, '-1');
         this.setTabIndex(this.refs.dialog, '-1');
         this.refs.dialog.setAttribute('aria-hidden', false);
         this.refs.dialog.focus();
       } 
+      // close
       if (!nextProps.active && this.props.active) {
         this.trapFocus(document.body, '0');
         this.refs.dialog.removeAttribute('tabindex');
