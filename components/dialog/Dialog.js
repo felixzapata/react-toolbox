@@ -89,14 +89,12 @@ var factory = function factory(Overlay, Button) {
       // open
       if (nextProps.active && !this.props.active) {
         this.trapFocus(document.body, '-1');
-        this.setTabIndex(this.refs.dialog, '-1');
         this.refs.dialog.setAttribute('aria-hidden', false);
         this.refs.dialog.focus();
       } 
       // close
       if (!nextProps.active && this.props.active) {
         this.trapFocus(document.body, '0');
-        this.refs.dialog.removeAttribute('tabindex');
         this.refs.dialog.setAttribute('aria-hidden', true);
       } 
 
@@ -121,7 +119,7 @@ var factory = function factory(Overlay, Button) {
           onMouseMove={this.props.onOverlayMouseMove}
           onMouseUp={this.props.onOverlayMouseUp}
         >
-          <div data-react-toolbox='dialog' ref='dialog' role='dialog' aria-hidden="true" className={className}>
+          <div data-react-toolbox='dialog' ref='dialog' role='dialog' aria-hidden="true" tabIndex="-1" className={className}>
             <section role='body' className={this.props.theme.body}>
               {this.props.title ? <h6 className={this.props.theme.title}>{this.props.title}</h6> : null}
               {this.props.children}
