@@ -61,7 +61,6 @@ var factory = function factory(Overlay, Button) {
     }
 
     // TODO: devolver el foco a donde estaba
-    // TODO: mandar el foco al dialog
 
     trapFocus(obj, tabIdx) {
 
@@ -90,9 +89,11 @@ var factory = function factory(Overlay, Button) {
       if (nextProps.active && !this.props.active) {
         this.trapFocus(document.body, '-1');
         this.refs.dialog.setAttribute('aria-hidden', false);
-        this.refs.dialog.parentNode.addEventListener('transitionend', function() {
-          this.refs.dialog.focus();
-        }.bind(this));
+        this.refs.dialog.parentNode.addEventListener('transitionend', function(event) {
+          if(event.target.parentNode === this.refs.dialog.parentNode) {
+            this.refs.dialog.focus();
+          }
+        }.bind(this), false);
       } 
       // close
       if (!nextProps.active && this.props.active) {
