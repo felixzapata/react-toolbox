@@ -90,7 +90,9 @@ var factory = function factory(Overlay, Button) {
       if (nextProps.active && !this.props.active) {
         this.trapFocus(document.body, '-1');
         this.refs.dialog.setAttribute('aria-hidden', false);
-        this.refs.dialog.focus();
+        this.refs.dialog.parentNode.addEventListener('transitionend', function() {
+          this.refs.dialog.focus();
+        }.bind(this));
       } 
       // close
       if (!nextProps.active && this.props.active) {
