@@ -34,6 +34,7 @@ var factory = function factory(Overlay, Button) {
     static defaultProps = {
       actions: [],
       active: false,
+      previousFocus: null,
       type: 'normal',
       // Elements that can be focused even if they have [disabled] attribute.
       FOCUSABLE_WITH_DISABLED: [
@@ -60,8 +61,6 @@ var factory = function factory(Overlay, Button) {
       }
     }
 
-    // TODO: devolver el foco a donde estaba
-
     trapFocus(obj, tabIdx) {
 
       const selector = this.getSelector(tabIdx);
@@ -84,7 +83,6 @@ var factory = function factory(Overlay, Button) {
     }
 
     componentWillUpdate (nextProps) {
-
       // open
       if (nextProps.active && !this.props.active) {
         this.trapFocus(document.body, '-1');
@@ -93,12 +91,18 @@ var factory = function factory(Overlay, Button) {
           if(event.target.parentNode === this.refs.dialog.parentNode) {
             this.refs.dialog.focus();
           }
-        }.bind(this), false);
+        }.bind(this));
       } 
       // close
       if (!nextProps.active && this.props.active) {
         this.trapFocus(document.body, '0');
         this.refs.dialog.setAttribute('aria-hidden', true);
+        this.refs.dialog.parentNode.addEventListener('transitionend', function(event) {
+          if(event.target.parentNode === this.refs.dialog.parentNode) {
+            this.props.previousFocus.focus();
+          }
+        }.bind(this));
+        
       } 
 
     }
