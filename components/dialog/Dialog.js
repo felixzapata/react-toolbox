@@ -98,7 +98,7 @@ var factory = function factory(Overlay, Button) {
         this.trapFocus(document.body, '0');
         this.refs.dialog.setAttribute('aria-hidden', true);
         this.refs.dialog.parentNode.addEventListener('transitionend', function(event) {
-          if(event.target.parentNode === this.refs.dialog.parentNode) {
+          if(event.target.parentNode === this.refs.dialog.parentNode && this.props.previousFocus) {
             this.props.previousFocus.focus();
           }
         }.bind(this));
