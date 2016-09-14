@@ -7,7 +7,10 @@ class DialogTest extends React.Component {
     active: false
   };
 
-  handleToggle = () => {
+  handleToggle = (event) => {
+    if(!this.previousFocus) {
+      this.previousFocus = event.target;
+    }
     this.setState({
       active: !this.state.active
     });
@@ -28,6 +31,7 @@ class DialogTest extends React.Component {
           <Dialog
             actions={this.actions}
             active={this.state.active}
+            previousFocus={this.previousFocus}
             title="Use Google's location service?"
             onOverlayClick={this.handleToggle}
             onEscKeyDown={this.handleToggle}
